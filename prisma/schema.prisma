@@ -1,0 +1,70 @@
+//prisma-coffee/prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" 
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int         @id @default(autoincrement())
+  email             String      @unique
+  password          String
+  username          String      @unique
+  receivedDonations Donation[]  @relation("ReceivedDonations")
+  createdAt         DateTime    @default(now())
+  profileId         Int?        @unique
+  profile           Profile?    @relation(fields: [profileId], references: [id])
+  bankCard          BankCard?
+  updatedAt         DateTime    @updatedAt
+
+  @@map("users")
+}
+
+model BankCard {
+  id          Int      @id @default(autoincrement())
+  country     String
+  firstName   String
+  lastName    String
+  cardNumber  String
+  expiryDate  DateTime
+  userId      Int      @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("bank_cards")
+}
+
+model Profile {
+  id               Int        @id @default(autoincrement())
+  name             String
+  about            String?
+  avatarImage      String?
+  socialMediaURL   String?
+  backgroundImage  String?
+  successMessage   String?
+  user             User?
+  donations        Donation[] @relation("ProfileDonations")
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  @@map("profiles")
+}
+
+model Donation {
+  id                     Int      @id @default(autoincrement())
+  amount                 Int
+  specialMessage         String?
+  socialURLOrBuyMeACoffee String?
+  donorId                Int
+  donor                  User     @relation("ReceivedDonations", fields: [donorId], references: [id])
+  recipientId            Int
+  recipient              Profile  @relation("ProfileDonations", fields: [recipientId], references: [id])
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@map("donations")
+}
