@@ -1,4 +1,3 @@
---prisma-coffee/prisma/migrations/20250602032658_buy_me_coffe/migration.sql
 -- CreateTable
 CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
