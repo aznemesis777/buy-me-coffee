@@ -1,8 +1,8 @@
 -- CreateTable
 CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
+    "clerkId" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "profileId" INTEGER,
@@ -18,7 +18,7 @@ CREATE TABLE "bank_cards" (
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
     "cardNumber" TEXT NOT NULL,
-    "expiryDate" TIMESTAMP(3) NOT NULL,
+    "expiryDate" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -54,6 +54,9 @@ CREATE TABLE "donations" (
 
     CONSTRAINT "donations_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_clerkId_key" ON "users"("clerkId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");

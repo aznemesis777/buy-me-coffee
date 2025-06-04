@@ -12,9 +12,11 @@
     "@clerk/nextjs": "^6.20.2",
     "@prisma/client": "^6.8.2",
     "@prisma/extension-accelerate": "^2.0.1",
+    "lucide-react": "^0.512.0",
     "next": "15.3.3",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "svix": "^1.66.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

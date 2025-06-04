@@ -1,24 +1,24 @@
-/prisma/schema.prisma
+// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql" 
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id                Int         @id @default(autoincrement())
-  email             String      @unique
-  password          String
-  username          String      @unique
-  receivedDonations Donation[]  @relation("ReceivedDonations")
-  createdAt         DateTime    @default(now())
-  profileId         Int?        @unique
-  profile           Profile?    @relation(fields: [profileId], references: [id])
-  bankCard          BankCard?
-  updatedAt         DateTime    @updatedAt
+  id                  Int        @id @default(autoincrement())
+  clerkId             String     @unique // Clerk user ID
+  email               String     @unique
+  username            String     @unique
+  receivedDonations   Donation[] @relation("ReceivedDonations")
+  createdAt           DateTime   @default(now())
+  profileId           Int?       @unique
+  profile             Profile?   @relation(fields: [profileId], references: [id])
+  bankCard            BankCard?
+  updatedAt           DateTime   @updatedAt
 
   @@map("users")
 }
@@ -29,7 +29,7 @@ model BankCard {
   firstName   String
   lastName    String
   cardNumber  String
-  expiryDate  DateTime
+  expiryDate  String   // Changed to String to match your validation (MM/YY format)
   userId      Int      @unique
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
@@ -55,16 +55,16 @@ model Profile {
 }
 
 model Donation {
-  id                     Int      @id @default(autoincrement())
-  amount                 Int
-  specialMessage         String?
-  socialURLOrBuyMeACoffee String?
-  donorId                Int
-  donor                  User     @relation("ReceivedDonations", fields: [donorId], references: [id])
-  recipientId            Int
-  recipient              Profile  @relation("ProfileDonations", fields: [recipientId], references: [id])
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
+  id                        Int     @id @default(autoincrement())
+  amount                    Int
+  specialMessage            String?
+  socialURLOrBuyMeACoffee   String?
+  donorId                   Int
+  donor                     User    @relation("ReceivedDonations", fields: [donorId], references: [id])
+  recipientId               Int
+  recipient                 Profile @relation("ProfileDonations", fields: [recipientId], references: [id])
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
 
   @@map("donations")
 }
