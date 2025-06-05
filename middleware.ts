@@ -1,76 +1,34 @@
-// //middleware.ts
-// import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-
-// const isPublicRoute = createRouteMatcher([
-//   "/sign-in(.*)",
-//   "/sign-up(.*)",
-//   "/onboarding(.*)",
-// ]);
-
-// export default clerkMiddleware(async (auth, req) => {
-//   if (!isPublicRoute(req)) {
-//     await auth.protect();
-//   }
-// });
-
-// export const config = {
-//   matcher: [
-//     // Skip Next.js internals and all static files, unless found in search params
-//     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-//     // Always run for API routes
-//     "/(api|trpc)(.*)",
-//   ],
-// };
-//middleware.ts
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-const isPublicRoute = createRouteMatcher([
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/onboarding(.*)",
-  "/api/webhooks(.*)", // For Clerk webhooks
-]);
+const isPublicRoute = createRouteMatcher(["/sign-in(.*)", "/sign-up(.*)", "/"]);
+const isOnboardingRoute = createRouteMatcher(["/onboarding"]);
 
-const isOnboardingRoute = createRouteMatcher(["/onboarding(.*)"]);
-const isProtectedRoute = createRouteMatcher([
-  "/dashboard(.*)",
-  "/profile(.*)",
-  "/settings(.*)",
-  // Add your protected routes here
-]);
+export default clerkMiddleware(async (auth, req: NextRequest) => {
+  const { userId, sessionClaims, redirectToSignIn } = await auth();
 
-export default clerkMiddleware(async (auth, req) => {
-  const { userId, sessionClaims } = await auth();
-
-  // Allow public routes
-  if (isPublicRoute(req)) {
+  // For users visiting /onboarding, don't try to redirect
+  if (userId && isOnboardingRoute(req)) {
     return NextResponse.next();
   }
 
-  // Protect all non-public routes
-  await auth.protect();
-
-  // Custom onboarding logic
-  if (userId) {
-    const userMetadata = sessionClaims?.metadata as
-      | { onboardingComplete?: boolean }
-      | undefined;
-    const hasCompletedOnboarding = userMetadata?.onboardingComplete || false;
-
-    // If user hasn't completed onboarding and is not on onboarding page
-    if (!hasCompletedOnboarding && !isOnboardingRoute(req)) {
-      const onboardingUrl = new URL("/onboarding", req.url);
-      return NextResponse.redirect(onboardingUrl);
-    }
-
-    // If user has completed onboarding but is trying to access onboarding page
-    if (hasCompletedOnboarding && isOnboardingRoute(req)) {
-      const dashboardUrl = new URL("/dashboard", req.url);
-      return NextResponse.redirect(dashboardUrl);
-    }
+  // If the user isn't signed in and the route is private, redirect to sign-in
+  if (!userId && !isPublicRoute(req)) {
+    return redirectToSignIn({ returnBackUrl: req.url });
   }
 
+  // Catch users who do not have `onboardingComplete: true` in their publicMetadata
+  // Redirect them to the /onboarding route to complete onboarding
+  if (
+    userId &&
+    !sessionClaims?.metadata?.onboardingComplete &&
+    !isPublicRoute(req)
+  ) {
+    const onboardingUrl = new URL("/onboarding", req.url);
+    return NextResponse.redirect(onboardingUrl);
+  }
+
+  // If the user is logged in and the route is protected, let them view.
   return NextResponse.next();
 });
 

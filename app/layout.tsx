@@ -22,9 +22,10 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
       appearance={{
         variables: {
-          colorPrimary: "#10B981", // Green theme for coffee
+          colorPrimary: "#10B981",
         },
       }}
     >
@@ -34,7 +35,7 @@ export default function RootLayout({
             <div className="flex items-center space-x-2">
               <div className="text-2xl">☕</div>
               <h1 className="text-xl font-bold text-gray-800">
-                Coffee Donations
+                Buy Me a Coffee
               </h1>
             </div>
 

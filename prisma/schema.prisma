@@ -10,15 +10,15 @@ datasource db {
 
 model User {
   id                  Int        @id @default(autoincrement())
-  clerkId             String     @unique // Clerk user ID
-  email               String     @unique
-  username            String     @unique
-  receivedDonations   Donation[] @relation("ReceivedDonations")
-  createdAt           DateTime   @default(now())
-  profileId           Int?       @unique
-  profile             Profile?   @relation(fields: [profileId], references: [id])
-  bankCard            BankCard?
-  updatedAt           DateTime   @updatedAt
+  clerkId            String     @unique // Clerk user ID
+  email              String     @unique
+  username           String     @unique
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  profileId          Int?       @unique
+  profile            Profile?   @relation(fields: [profileId], references: [id])
+  bankCard           BankCard?
+  donationsGiven     Donation[] @relation("DonorRelation")
 
   @@map("users")
 }
@@ -29,7 +29,7 @@ model BankCard {
   firstName   String
   lastName    String
   cardNumber  String
-  expiryDate  String   // Changed to String to match your validation (MM/YY format)
+  expiryDate  String   // MM/YY format
   userId      Int      @unique
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
@@ -47,7 +47,7 @@ model Profile {
   backgroundImage  String?
   successMessage   String?
   user             User?
-  donations        Donation[] @relation("ProfileDonations")
+  donationsReceived Donation[] @relation("RecipientRelation")
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
 
@@ -55,16 +55,16 @@ model Profile {
 }
 
 model Donation {
-  id                        Int     @id @default(autoincrement())
-  amount                    Int
-  specialMessage            String?
-  socialURLOrBuyMeACoffee   String?
-  donorId                   Int
-  donor                     User    @relation("ReceivedDonations", fields: [donorId], references: [id])
-  recipientId               Int
-  recipient                 Profile @relation("ProfileDonations", fields: [recipientId], references: [id])
-  createdAt                 DateTime @default(now())
-  updatedAt                 DateTime @updatedAt
+  id                      Int      @id @default(autoincrement())
+  amount                  Int
+  specialMessage          String?
+  socialURLOrBuyMeACoffee String?
+  donorId                 Int
+  donor                   User     @relation("DonorRelation", fields: [donorId], references: [id])
+  recipientId             Int
+  recipient               Profile  @relation("RecipientRelation", fields: [recipientId], references: [id])
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
 
   @@map("donations")
 }

@@ -10,12 +10,17 @@ export async function POST(_request: NextRequest) {
     const { userId } = await auth();
     console.log("Clerk userId:", userId);
 
+    if (!userId) {
+      console.log("No userId from auth");
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const user = await currentUser();
     console.log("Clerk user:", user ? "found" : "not found");
 
-    if (!userId || !user) {
-      console.log("Missing userId or user");
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!user) {
+      console.log("No current user found");
+      return NextResponse.json({ error: "User not found" }, { status: 401 });
     }
 
     console.log("Checking if user exists in database...");
@@ -29,9 +34,22 @@ export async function POST(_request: NextRequest) {
     console.log("Existing user:", dbUser ? "found" : "not found");
 
     if (!dbUser) {
-      const email = user.emailAddresses[0]?.emailAddress;
-      const username =
-        user.username || user.firstName || email?.split("@")[0] || "user";
+      const email = user.emailAddresses?.[0]?.emailAddress;
+      if (!email) {
+        console.log("No email found in Clerk user");
+        return NextResponse.json({ error: "Email not found" }, { status: 400 });
+      }
+
+      let username =
+        user.username || user.firstName || email.split("@")[0] || "user";
+
+      const existingUser = await prisma.user.findUnique({
+        where: { username },
+      });
+
+      if (existingUser) {
+        username = `${username}_${Date.now()}`;
+      }
 
       console.log(
         "Creating new user with email:",
@@ -40,22 +58,28 @@ export async function POST(_request: NextRequest) {
         username
       );
 
-      if (!email) {
-        console.log("No email found");
-        return NextResponse.json({ error: "Email not found" }, { status: 400 });
+      try {
+        dbUser = await prisma.user.create({
+          data: {
+            clerkId: userId,
+            email: email,
+            username: username,
+          },
+          include: {
+            profile: true,
+            bankCard: true,
+          },
+        });
+        console.log("User created successfully:", dbUser.id);
+      } catch (createError) {
+        console.error("Error creating user:", createError);
+        return NextResponse.json(
+          { error: "Failed to create user" },
+          { status: 500 }
+        );
       }
-
-      dbUser = await prisma.user.create({
-        data: {
-          clerkId: userId,
-          email: email,
-          username: username,
-        },
-        include: {
-          profile: true,
-          bankCard: true,
-        },
-      });
+    } else {
+      console.log("User already exists:", dbUser.id);
     }
 
     return NextResponse.json({
@@ -71,6 +95,12 @@ export async function POST(_request: NextRequest) {
     });
   } catch (error) {
     console.error("User sync error:", error);
+
+    if (error instanceof Error) {
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+    }
+
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

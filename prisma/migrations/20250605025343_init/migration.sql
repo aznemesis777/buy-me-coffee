@@ -5,8 +5,8 @@ CREATE TABLE "users" (
     "email" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "profileId" INTEGER,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "profileId" INTEGER,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
