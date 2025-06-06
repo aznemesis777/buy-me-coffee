@@ -1,15 +1,25 @@
+//app/onboarding/layout.tsx
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import prisma from "@/lib/prisma";
 
 export default async function OnboardingLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { sessionClaims } = await auth();
+  const { userId, sessionClaims } = await auth();
 
-  // Redirect to dashboard if onboarding is already complete
-  if (sessionClaims?.metadata?.onboardingComplete === true) {
+  if (!userId) {
+    redirect("/sign-in");
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { clerkId: userId },
+    include: { profile: true },
+  });
+
+  if (user?.profile || sessionClaims?.metadata?.onboardingComplete === true) {
     redirect("/dashboard");
   }
 

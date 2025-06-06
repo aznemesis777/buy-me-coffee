@@ -10,7 +10,7 @@ datasource db {
 
 model User {
   id                  Int        @id @default(autoincrement())
-  clerkId            String     @unique // Clerk user ID
+  clerkId            String     @unique 
   email              String     @unique
   username           String     @unique
   createdAt          DateTime   @default(now())
@@ -29,7 +29,7 @@ model BankCard {
   firstName   String
   lastName    String
   cardNumber  String
-  expiryDate  String   // MM/YY format
+  expiryDate  String   
   userId      Int      @unique
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())

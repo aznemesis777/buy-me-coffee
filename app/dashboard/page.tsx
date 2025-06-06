@@ -1,3 +1,4 @@
+//app/dashboard/page.tsx
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
@@ -9,12 +10,10 @@ export default async function DashboardPage() {
     redirect("/sign-in");
   }
 
-  // If onboarding isn't complete, redirect (middleware should handle this)
   if (!sessionClaims?.metadata?.onboardingComplete) {
     redirect("/onboarding");
   }
 
-  // Get user and profile from database
   const user = await prisma.user.findUnique({
     where: { clerkId: userId },
     include: {
@@ -46,7 +45,6 @@ export default async function DashboardPage() {
     redirect("/onboarding");
   }
 
-  // Calculate total earnings
   const totalEarnings = await prisma.donation.aggregate({
     where: { recipientId: user.profile.id },
     _sum: { amount: true },
@@ -64,7 +62,6 @@ export default async function DashboardPage() {
         <p className="text-gray-600">Here's how your coffee fund is doing</p>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center">
@@ -95,7 +92,6 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Profile Section */}
       <div className="bg-white rounded-lg shadow mb-8">
         <div className="p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
@@ -156,7 +152,6 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Recent Donations */}
       <div className="bg-white rounded-lg shadow">
         <div className="p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
