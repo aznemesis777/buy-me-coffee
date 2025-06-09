@@ -1,5 +1,9 @@
 // app/layout.tsx
+"use client";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import {
   ClerkProvider,
   SignInButton,
@@ -10,16 +14,33 @@ import {
 } from "@clerk/nextjs";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: "Coffee Donations - Support Creators",
-  description: "Buy coffee for your favorite creators",
-};
+// Note: Move metadata to a separate metadata file since we're using "use client"
+// Create app/metadata.ts with the metadata export
+
+function LoadingSpinner() {
+  return (
+    <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 ml-2"></div>
+  );
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const router = useRouter();
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  const handleDashboardClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsNavigating(true);
+
+    setTimeout(() => {
+      router.push("/dashboard");
+
+      setTimeout(() => setIsNavigating(false), 100);
+    }, 200);
+  };
   return (
     <ClerkProvider
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
@@ -32,10 +53,14 @@ export default function RootLayout({
       <html lang="en">
         <body>
           <header className="flex justify-between items-center p-4 bg-white shadow-sm border-b">
-            <div className="flex items-center space-x-2">
+            <div
+              onClick={handleDashboardClick}
+              className="flex items-center space-x-2 hover:opacity-80 transition-opacity cursor-pointer"
+            >
               <div className="text-2xl">☕</div>
-              <h1 className="text-xl font-bold text-gray-800">
+              <h1 className="text-xl font-bold text-gray-800 flex items-center">
                 Buy Me a Coffee
+                {isNavigating && <LoadingSpinner />}
               </h1>
             </div>
 

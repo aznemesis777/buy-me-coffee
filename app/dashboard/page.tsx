@@ -92,66 +92,6 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow mb-8">
-        <div className="p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Your Profile
-          </h2>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Name
-              </label>
-              <p className="mt-1 text-gray-900">{profile.name}</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                About
-              </label>
-              <p className="mt-1 text-gray-900">{profile.about}</p>
-            </div>
-            {profile.socialMediaURL && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Social Media
-                </label>
-                <a
-                  href={profile.socialMediaURL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-1 text-green-600 hover:text-green-700"
-                >
-                  {profile.socialMediaURL}
-                </a>
-              </div>
-            )}
-            {profile.successMessage && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Thank You Message
-                </label>
-                <p className="mt-1 text-gray-900">{profile.successMessage}</p>
-              </div>
-            )}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Your Coffee Link
-              </label>
-              <div className="mt-1 flex items-center">
-                <code className="bg-gray-100 px-3 py-2 rounded text-sm">
-                  {process.env.NODE_ENV === "production"
-                    ? `https://yourapp.com/profile/${profile.id}`
-                    : `http://localhost:3000/profile/${profile.id}`}
-                </code>
-                <button className="ml-2 text-green-600 hover:text-green-700 text-sm font-medium">
-                  Copy
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="bg-white rounded-lg shadow">
         <div className="p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
