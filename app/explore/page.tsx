@@ -92,7 +92,6 @@ export default function ExplorePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Explore Creators ☕
@@ -102,7 +101,6 @@ export default function ExplorePage() {
           </p>
         </div>
 
-        {/* Search Bar */}
         <div className="mb-8">
           <div className="relative max-w-md">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -125,7 +123,6 @@ export default function ExplorePage() {
           </div>
         </div>
 
-        {/* Results Count */}
         {!loading && (
           <div className="mb-6">
             <p className="text-sm text-gray-600">
@@ -135,7 +132,6 @@ export default function ExplorePage() {
           </div>
         )}
 
-        {/* Loading State */}
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {[...Array(8)].map((_, i) => (
@@ -155,7 +151,6 @@ export default function ExplorePage() {
           </div>
         ) : (
           <>
-            {/* Profiles Grid */}
             {profiles.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
                 {profiles.map((profile) => (
@@ -163,7 +158,6 @@ export default function ExplorePage() {
                     key={profile.id}
                     className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden"
                   >
-                    {/* Background Image */}
                     {profile.backgroundImage && (
                       <div className="h-24 bg-gradient-to-r from-green-400 to-blue-500 relative">
                         <Image
@@ -193,7 +187,6 @@ export default function ExplorePage() {
                         </div>
                       </div>
 
-                      {/* Name and Username */}
                       <div className="text-center mb-3">
                         <h3 className="text-lg font-semibold text-gray-900 mb-1">
                           {profile.name}
@@ -203,7 +196,6 @@ export default function ExplorePage() {
                         </p>
                       </div>
 
-                      {/* About */}
                       {profile.about && (
                         <p className="text-sm text-gray-600 mb-4 line-clamp-2">
                           {profile.about}
@@ -224,7 +216,6 @@ export default function ExplorePage() {
                         </div>
                       </div>
 
-                      {/* View Profile Button */}
                       <Link
                         href={`/${profile.username}`}
                         className="w-full bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-4 rounded-md transition-colors duration-200 flex items-center justify-center"
@@ -248,7 +239,6 @@ export default function ExplorePage() {
               </div>
             )}
 
-            {/* Pagination */}
             {pagination.totalPages > 1 && (
               <div className="flex justify-center items-center space-x-2">
                 <button
