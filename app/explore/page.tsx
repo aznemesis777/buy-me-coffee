@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Search, Users, DollarSign, Coffee, ExternalLink } from "lucide-react";
 
-interface Profile {
+type Profile = {
   id: number;
   name: string;
   about: string;
@@ -16,14 +16,14 @@ interface Profile {
   totalDonations: number;
   totalEarnings: number;
   createdAt: string;
-}
+};
 
-interface PaginationData {
+type PaginationData = {
   page: number;
   limit: number;
   total: number;
   totalPages: number;
-}
+};
 
 export default function ExplorePage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -170,7 +170,6 @@ export default function ExplorePage() {
                     )}
 
                     <div className="p-6">
-                      {/* Avatar */}
                       <div className="flex justify-center mb-4">
                         <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
                           {profile.avatarImage ? (
@@ -202,7 +201,6 @@ export default function ExplorePage() {
                         </p>
                       )}
 
-                      {/* Stats */}
                       <div className="flex justify-between items-center mb-4 text-sm">
                         <div className="flex items-center text-gray-600">
                           <Coffee className="w-4 h-4 mr-1" />

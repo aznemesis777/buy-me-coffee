@@ -4,11 +4,11 @@
 import { useState } from "react";
 import { Coffee, Heart, Gift, Star } from "lucide-react";
 
-interface DonationFormProps {
+type DonationFormProps = {
   recipientId: number;
   recipientName: string;
   successMessage?: string;
-}
+};
 
 const predefinedAmounts = [
   { amount: 300, label: "$3", coffees: 1, icon: Coffee },
@@ -63,7 +63,6 @@ export default function DonationForm({
     setLoading(true);
 
     try {
-      // Use your existing API route
       const response = await fetch("/api/donation/create-donation", {
         method: "POST",
         headers: {
@@ -79,14 +78,12 @@ export default function DonationForm({
 
       if (response.ok) {
         setShowSuccess(true);
-        // Reset form
         setMessage("");
         setSocialUrl("");
         setCustomAmount("");
         setSelectedAmount(500);
         setIsCustom(false);
 
-        // Hide success message after 5 seconds
         setTimeout(() => setShowSuccess(false), 5000);
       } else {
         const error = await response.json();
@@ -125,13 +122,11 @@ export default function DonationForm({
 
   return (
     <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-      {/* Amount Selection */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-3">
           Choose an amount
         </label>
 
-        {/* Predefined amounts */}
         <div className="grid grid-cols-2 gap-3 mb-4">
           {predefinedAmounts.map(({ amount, label, coffees, icon: Icon }) => (
             <button
@@ -155,7 +150,6 @@ export default function DonationForm({
           ))}
         </div>
 
-        {/* Custom amount */}
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <span className="text-gray-500">$</span>
@@ -176,7 +170,6 @@ export default function DonationForm({
         </div>
       </div>
 
-      {/* Message */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Say something nice (optional)
@@ -194,7 +187,6 @@ export default function DonationForm({
         </div>
       </div>
 
-      {/* Social URL */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Your social media or website (optional)
@@ -208,7 +200,6 @@ export default function DonationForm({
         />
       </div>
 
-      {/* Submit Button */}
       <button
         type="submit"
         disabled={loading || getCurrentAmount() <= 0}
@@ -224,7 +215,6 @@ export default function DonationForm({
           : `Support with $${(getCurrentAmount() / 100).toFixed(2)}`}
       </button>
 
-      {/* Security note */}
       <p className="text-xs text-gray-500 text-center mt-4">
         🔒 Your payment is processed securely. We never store your payment
         information.

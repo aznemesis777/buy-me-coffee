@@ -1,7 +1,6 @@
 // app/layout.tsx
 "use client";
-import type { Metadata } from "next";
-import Link from "next/link";
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
@@ -13,9 +12,6 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import "./globals.css";
-
-// Note: Move metadata to a separate metadata file since we're using "use client"
-// Create app/metadata.ts with the metadata export
 
 function LoadingSpinner() {
   return (

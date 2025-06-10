@@ -6,15 +6,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
 
-interface DashboardLayoutProps {
+type DashboardLayoutProps = {
   children: ReactNode;
-}
+};
 
-interface ProfileData {
+type ProfileData = {
   id: number;
   name: string;
   avatarImage?: string;
-}
+};
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { user } = useUser();
@@ -58,23 +58,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       current: pathname === "/profile/update",
     },
   ];
-
-  const handleShareLink = async () => {
-    if (!username) return;
-
-    const url =
-      process.env.NODE_ENV === "production"
-        ? `https://buymeacoffee.com/${username}`
-        : `http://localhost:3000/${username}`;
-
-    try {
-      await navigator.clipboard.writeText(url);
-
-      console.log("Link copied to clipboard!");
-    } catch (error) {
-      console.error("Failed to copy link:", error);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">

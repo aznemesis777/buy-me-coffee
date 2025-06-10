@@ -21,6 +21,9 @@ export async function POST(request: NextRequest) {
 
     const donor = await prisma.user.findUnique({
       where: { clerkId: userId },
+      include: {
+        profile: true,
+      },
     });
 
     if (!donor) {
@@ -32,12 +35,29 @@ export async function POST(request: NextRequest) {
 
     const recipient = await prisma.profile.findUnique({
       where: { id: validatedData.recipientId },
+      include: {
+        user: true,
+      },
     });
 
     if (!recipient) {
       return NextResponse.json(
         { error: "Recipient not found" },
         { status: 404 }
+      );
+    }
+
+    if (donor.profileId === validatedData.recipientId) {
+      return NextResponse.json(
+        { error: "You cannot donate to yourself" },
+        { status: 400 }
+      );
+    }
+
+    if (recipient.user && recipient.user.id === donor.id) {
+      return NextResponse.json(
+        { error: "You cannot donate to yourself" },
+        { status: 400 }
       );
     }
 
