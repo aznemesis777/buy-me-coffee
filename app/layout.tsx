@@ -3,14 +3,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import {
-  ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
+import { ClerkProvider, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import "./globals.css";
 
 function LoadingSpinner() {
@@ -33,13 +26,17 @@ export default function RootLayout({
 
     setTimeout(() => {
       router.push("/dashboard");
-
       setTimeout(() => setIsNavigating(false), 100);
     }, 200);
   };
+
   return (
     <ClerkProvider
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      signInUrl="/sign-in"
+      signUpUrl="/sign-up"
+      signInFallbackRedirectUrl="/dashboard"
+      signUpFallbackRedirectUrl="/onboarding"
       appearance={{
         variables: {
           colorPrimary: "#10B981",
@@ -62,16 +59,18 @@ export default function RootLayout({
 
             <div className="flex items-center gap-4">
               <SignedOut>
-                <SignInButton mode="modal">
-                  <button className="px-4 py-2 text-gray-600 hover:text-gray-800">
-                    Sign In
-                  </button>
-                </SignInButton>
-                <SignUpButton mode="modal">
-                  <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-                    Get Started
-                  </button>
-                </SignUpButton>
+                <button
+                  onClick={() => router.push("/sign-in")}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => router.push("/sign-up")}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                >
+                  Get Started
+                </button>
               </SignedOut>
               <SignedIn>
                 <UserButton
