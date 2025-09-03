@@ -19,7 +19,7 @@ const updateBankCardSchema = bankCardSchema.partial();
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { bankCardId: string } }
+  { params }: { params: Promise<{ bankCardId: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -28,8 +28,11 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Await the params promise
+    const { bankCardId } = await params;
+
     const bankCard = await prisma.bankCard.findUnique({
-      where: { id: parseInt(params.bankCardId) },
+      where: { id: parseInt(bankCardId) },
       include: { user: true },
     });
 
@@ -41,7 +44,7 @@ export async function PATCH(
     const validatedData = updateBankCardSchema.parse(body);
 
     const updatedBankCard = await prisma.bankCard.update({
-      where: { id: parseInt(params.bankCardId) },
+      where: { id: parseInt(bankCardId) },
       data: validatedData,
     });
 
