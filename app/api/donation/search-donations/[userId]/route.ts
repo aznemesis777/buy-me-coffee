@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
     const { userId: clerkUserId } = await auth();
@@ -20,8 +20,11 @@ export async function GET(
     const limit = parseInt(searchParams.get("limit") || "10");
     const skip = (page - 1) * limit;
 
+    // Await the params promise
+    const { userId } = await params;
+
     const user = await prisma.user.findUnique({
-      where: { id: parseInt(params.userId) },
+      where: { id: parseInt(userId) },
       include: { profile: true },
     });
 

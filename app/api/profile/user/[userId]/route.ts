@@ -17,7 +17,7 @@ const updateProfileSchema = createProfileSchema.partial();
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
     const { userId: clerkUserId } = await auth();
@@ -26,8 +26,11 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Await the params promise
+    const { userId } = await params;
+
     const user = await prisma.user.findUnique({
-      where: { id: parseInt(params.userId) },
+      where: { id: parseInt(userId) },
       include: { profile: true },
     });
 
